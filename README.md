@@ -66,5 +66,3 @@ Mode opératoire : sur papier uniquement.
 - Github
 - Visual Studio Code
 - Tests écrits : https://eval.iict-heig-vd.in/users/evaluations/cm77fb50b0a4dx8z1o9al6i99
-
-<>
