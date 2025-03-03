@@ -1,9 +1,17 @@
 #include <stdio.h>
 #include <math.h>
 
-double deg2rad(const double d) {
-	return d*M_PI/180.0;
+double deg2rad(const double alpha);
+double rad2deg(const double alpha);
+
+double deg2rad(const double alpha) {
+	return alpha*M_PI/180.;
 }
+
+double rad2deg(const double alpha) {
+	return alpha*180./M_PI;
+}
+
 int main(int argc, const char *argv[])
 {
 	const char *filename = "./data/circle.txt"; // rel
@@ -17,15 +25,19 @@ int main(int argc, const char *argv[])
 		return 1;
 	}
 
-	const double ALPHA_MIN=0.;
-	const double ALPHA_MAX=359.;
-	const double ALPHA_STEP=1.;
-	const double RADIUS=2.0;
-	for(double alpha=ALPHA_MIN;alpha<=ALPHA_MAX;alpha+=ALPHA_STEP) {
+	const double ALPHA_MIN = 0.;
+	const double ALPHA_MAX = 359.;
+	const double ALPHA_STEP = rad2deg(M_PI/1234.);
+	const double RADIUS = 2.;
+
+	double alpha=0.;
+
+	for (alpha=ALPHA_MIN;alpha<=ALPHA_MAX;alpha+=ALPHA_STEP) {
 		double r=RADIUS*cos(deg2rad(alpha));
 		double i=RADIUS*sin(deg2rad(alpha));
-		fprintf(f,"%5.2lf %+8.3lf %+8.3lf\n",alpha,r,i);
+		fprintf(f, "%+8.3lf %+8.3lf %+8.3lf\n", alpha, r, i);
 	}
+
 	if (0 != fclose(f))
 	{
 		printf("Error while closing %s\n", filename);
