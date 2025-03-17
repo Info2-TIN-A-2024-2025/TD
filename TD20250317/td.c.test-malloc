@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define N 100
+
+#define ONE_MEG (1024*1024)
+
+const int g=42;
+
+float* ptr_bidon=NULL;
+
+int main(int argc, const char *argv[])
+{
+	double t1[N];
+	const int glocal=360;
+
+	printf("t1=%p\n", t1);
+	printf("main=%p\n", main);
+	printf("ptr_bidon=%p\n", &ptr_bidon);
+	printf("g=%p\n", &g);
+	printf("glocal=%p\n", &glocal);
+
+
+	double* t=NULL;
+
+	t=(double*)malloc(ONE_MEG*sizeof(double));
+	printf("t=%p\n", t);
+	printf("size=%lu\n", ONE_MEG*sizeof(double));
+	if(NULL==t) {
+		printf("Error while allocating memory\n");
+		return 1;
+	}
+
+
+
+	free(t);
+	t=NULL;
+	return 0;
+}
