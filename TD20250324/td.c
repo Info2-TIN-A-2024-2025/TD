@@ -1,96 +1,128 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #define MAX_FILENAME_SIZE 100
 
-double get_random_value(const double min, const double max)
-{
-	double x = 0.;
-	double a = (max - min) / RAND_MAX;
-	double b = min;
-	x = rand() * a + b;
-	return x;
-}
-
-void manage_data(double **data, const size_t n)
-{
-
-	// alloc dyn of n x double + test if NULL
-	*data = (double *)malloc(n * sizeof(double));
-	if (NULL == *data)
-		return;
-
-	double *t = *data;
-
-	// for loop [0..n[, fill data[index] with random value [0..1]
-	for (size_t index = 0; index < n; index++)
+void manage_data(double **t, size_t num_cells) {
+	*t = (double *)malloc(num_cells * sizeof(double));
+	if (NULL == *t)
 	{
-		t[index] = get_random_value(0., 1.);
-		//(*data)[index]=get_random_value(0.,1.);
-		//*((*data)+index)=get_random_value(0.,1.);
+		printf("Error while allocating memory at line %d\n", __LINE__);
+		return;
 	}
+
+	// fill t with random value,s [0..1] rand()/(double)RAND_MAX
+	for (int index = 0; index < num_cells; index++)
+	{
+		//(*t)[index] = rand() / (double)RAND_MAX;
+		*((*t)+index) = rand() / (double)RAND_MAX;
+	}
+
 }
 
 int main(int argc, const char *argv[])
 {
-	// process args
-	// argc == 3
-	// argv[0] -> num_cells
-	// argv[1] -> filename index
-	if(3!=argc){
-		printf("bad number of args.");
+	size_t num_cells = 0;
+	size_t filename_index = 0;
+	char filename[MAX_FILENAME_SIZE];
+	const char *mode = "wb";
+	FILE *f = NULL;
+	int ret = 0;
+	double *t = NULL;
+	size_t index = 0; // for loop to fill t
+	double min_value = 0.;
+	double max_value = 0.;
+	double sum_of_values = 0.;
+	double mean_value = 0.;
+
+	// read / check arguments
+	// - num_cells
+	// - filename_index
+	// => filename
+	if (3 != argc)
+	{
+		printf("usage: %s num_cells file_index\n", argv[0]);
 		return 1;
 	}
-	// create data -> manage_data : data address, num_cells
-	double *data = NULL;
-	size_t num_cells = atoi(argv[1]);
+	num_cells = atoi(argv[1]);
+	filename_index = atoi(argv[2]);
+	// TODO: check if num_cells > 0
+	sprintf(filename, "./data/d%lu.bin", filename_index);
+	printf("filename : [%s]\n", filename);
 
-	manage_data(&data, num_cells);
-	if (NULL == data)
+	// open file
+	f = fopen(filename, mode);
+	if (NULL == f)
 	{
-		printf("Error while allocating memory for data.");
+		printf("Error while opening %s\n", filename);
+		return 1;
+	}
+
+	// write header to file (num_cells)
+	ret = fwrite(&num_cells, sizeof(size_t), 1, f);
+	if (1 != ret)
+	{
+		printf("Error while write header to %s\n", filename);
 		return 2;
 	}
 
-	// compute min, max, mean
-	double min_value = data[0];
-	double max_value = data[0];
-	double sum = data[0];
-	double mean_value = 0.;
-	for (size_t index = 1; index < num_cells; index++) {
-		min_value=data[index]<min_value ? data[index] : min_value;
-		max_value=data[index]>max_value ? data[index] : max_value;
-		sum+=data[index];
-	}
-	mean_value=sum/num_cells;
-	printf("min  = %7.4lf\n", min_value);
-	printf("max  = %7.4lf\n", max_value);
-	printf("mean = %7.4lf\n", mean_value);
+	// dynamic allocation of table
+	// t (double*)
+	manage_data(&t, num_cells);
 
-	// filename setup
-	char filename[MAX_FILENAME_SIZE];
-	sprintf(filename,"./data/d%d.bin", atoi(argv[2]));
-	printf("filename = [%s]\n", filename);
-
-	// fopen
-	const char *mode="wb";
-	FILE* f=fopen(filename,mode);
-	if (NULL == f)
+	// compute min, max and mean values of t (=> previous TD)
+	// - min_value (double)
+	// - max_value (double)
+	// - mean_value (double)
+	min_value = t[0];
+	max_value = t[0];
+	sum_of_values = t[0];
+	for (index = 1; index < num_cells; index++)
 	{
-		printf("Error while opening file.");
-		free(data);
-		return 4;
+		min_value = t[index] < min_value ? t[index] : min_value;
+		// NIET !! t[index] < min_value ? min_value = t[index] : min_value = min_value;
+		max_value = t[index] > max_value ? t[index] : max_value;
+		sum_of_values += t[index];
+	}
+	mean_value=sum_of_values/num_cells;
+	printf("min_value  = %.6lf\n", min_value);
+	printf("max_value  = %.6lf\n", max_value);
+	printf("mean_value = %.6lf\n", mean_value);
+
+	// write t to file (num_cells)
+	ret = fwrite(t, sizeof(double), num_cells, f);
+	if (num_cells != ret)
+	{
+		printf("Error while write data to %s\n", filename);
+	}
+	// write min_value to file
+	ret = fwrite(&min_value, sizeof(double), 1, f);
+	if (1 != ret)
+	{
+		printf("Error while write min_value to %s\n", filename);
+	}
+	// write max_value to file
+	ret = fwrite(&max_value, sizeof(double), 1, f);
+	if (1 != ret)
+	{
+		printf("Error while write max_value to %s\n", filename);
+	}
+	// write mean_value to file
+	ret = fwrite(&mean_value, sizeof(double), 1, f);
+	if (1 != ret)
+	{
+		printf("Error while write mean_value to %s\n", filename);
 	}
 
-	// fwrite header
-	int ret=0;
-	ret=fwrite(&num_cells, sizeof(size_t), 1, f);
+	// close file
+	if (0 != fclose(f))
+	{
+		printf("Error while closing %s\n", filename);
+	}
 
-	// fwrite data
+	// free t
+	free(t);
+	t = NULL;
 
-	// fwrite min,max,mean
-
-	// fclose
-
-	// free
 	return 0;
 }
