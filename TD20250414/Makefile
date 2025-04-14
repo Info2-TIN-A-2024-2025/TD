@@ -5,12 +5,12 @@
 # set the executable name
 EXEC=app
 
-LANGUAGE = DE
+LANGUAGE = EN
 
 CC=gcc
 CFLAGS+= -std=c17 -Wall -g
 CFLAGS+=  -D=_XOPEN_SOURCE
-CFLAGS += -DLANGUAGE=\"$(LANGUAGE)\"
+CFLAGS += -DLANGUAGE=$(LANGUAGE)
 LDLIBS:= -lm 
 
 ODIR:=obj

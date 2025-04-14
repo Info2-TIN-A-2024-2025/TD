@@ -1,27 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define LANGUAGE "EN" // see Makefile
+#define FR 1
+#define EN 2
+#define DE 3
 
+// #define LANGUAGE DE  // see Makefile
 
 int main(int argc, const char *argv[])
 {
-	if (strcmp(LANGUAGE, "EN") == 0)
-	{
-		printf("Hello!\n");
-	}
-	else if (strcmp(LANGUAGE, "FR") == 0)
-	{
-		printf("Bonjour !\n");
-	}
-	else if (strcmp(LANGUAGE, "DE") == 0)
-	{
-		printf("HALO!\n");
-	}
-	else
-	{
-		printf("Unsupported language.\n");
-	}
+#ifndef LANGUAGE
+#warning "LANGUAGE NOT DEFINED"
+#define LANGUAGE FR
+#endif
 
+#if LANGUAGE == EN
+	printf("Hello!\n");
+#elif LANGUAGE == FR
+	printf("Bonjour !\n");
+#elif LANGUAGE == DE
+	printf("HALO!\n");
+#else
+	printf("Unsupported language.\n");
+#endif
 	return 0;
 }
