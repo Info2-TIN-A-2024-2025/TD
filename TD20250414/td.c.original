@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include "td.h"
+
+/*
+#include : header file < > or " "
+#warning : generate a warning message during compilation
+#error : generate an error during compilation (executable not generated)
+#define : symbol of the preprocessor
+#pragma : ex: pack(0), compiler specific
+
+Conditional compilation
+#if
+#else
+#elif
+#endif
+
+*/
+// TODO:
+// FIXME:
+
+// #warning "JE DOIS FINIR CETTE FONCTION"
+
+//#define DEBUG_LEVEL 0
+
+#define TAB_SIZE 10
+
+int main(int argc, const char *argv[])
+{
+	int t[TAB_SIZE];
+
+	for (size_t i = 0; i < TAB_SIZE; i++)
+	{
+		t[i] = i;
+#if DEBUG_LEVEL > 2
+		printf("%d\n", t[i]);
+#endif
+	}
+	//	#error "PLEASE DO THE JOB :)"
+
+	// debug part
+#if DEBUG_LEVEL > 0
+	puts("debug part");
+#else
+	printf("no debug part at line %d", __LINE__);
+#endif
+	// nominal part
+	puts("nominal part");
+	return 0;
+}
