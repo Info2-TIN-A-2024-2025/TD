@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include "list.h"
+
+error_code init_list(list *l)
+{
+    if (NULL == l)
+        return BAD_LIST;
+    l->count = 0;
+    return NO_ERROR;
+}
+
+void display_list(const list l)
+{
+
+    printf("count=%lu\n", l.count);
+    for (size_t index = 0; index < l.count; index++)
+    {
+        display_elem(l.t[index]);
+    }
+    return;
+}
+
+error_code insert_list(list *l, const elem e, const size_t pos)
+{
+    if (NULL == l)
+        return BAD_LIST;
+    if (is_full(*l))
+        return LIST_FULL;
+    if (pos > l->count)
+        return BAD_POS;
+    for (size_t index = l->count; index > pos; index--)
+        l->t[index] = l->t[index - 1];
+    l->t[pos] = e;
+    l->count++;
+    return NO_ERROR;
+}
+
+error_code remove_list(list *l, const size_t pos)
+{
+    if (NULL == l)
+        return BAD_LIST;
+    if (is_empty(*l))
+        return LIST_EMPTY;
+    if (pos >= l->count)
+        return BAD_POS;
+    for (size_t index = pos; index <= l->count - 2; index++)
+        l->t[index] = l->t[index + 1];
+    l->count--;
+    return NO_ERROR;
+}
+
+error_code get_elem(const list l, const size_t pos, elem *e) {
+    if (is_empty(l))
+        return LIST_EMPTY;
+    if (pos >= l.count)
+        return BAD_POS;
+    if(NULL==e)
+        return BAD_ELEM;
+    // 🍎C🍎V de l.t[pos] dans *e; 
+    memcpy(e,&(l.t[pos]), sizeof(elem) );
+    return NO_ERROR;
+}
+
+bool is_empty(const list l)
+{
+    return l.count == 0;
+}
+bool is_full(const list l)
+{
+    return l.count >= MAX_LIST_SIZE;
+}
