@@ -5,7 +5,7 @@
 
 int main(int argc, const char *argv[])
 {
-	list q;
+	queue q;
 	init_queue(&q);
 
 	elem e = 10;

@@ -4,6 +4,8 @@
 #include "elem.h"
 #include "list.h"
 
-error_code init_queue(list *q);
-error_code enqueue(list *q, const elem e);
-error_code dequeue(list *q, elem *e);
+typedef list queue;
+
+error_code init_queue(queue *q);
+error_code enqueue(queue *q, const elem e);
+error_code dequeue(queue *q, elem *e);
