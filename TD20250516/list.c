@@ -64,8 +64,6 @@ error_code insert_list(list *l, const elem e, const size_t pos)
         l->count++;
         return NO_ERROR;
     }
-    // TODO: insert at pos (not begin nor end)
-
     return NO_ERROR;
 }
 
